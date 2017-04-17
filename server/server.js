@@ -1,5 +1,6 @@
 var express = require("express")
 var app = express()
+const _ = require("lodash")
 var bodyParser = require("body-parser")
 var {mongoose} = require("./db/mongoose")
 
@@ -49,7 +50,33 @@ app.get('/todos/:id', (req, res)=>{
     })
 })
 
+app.patch('/todos/:id', (req, res)=>{
+  const body = _.pick(req.body, ['text', 'completed'])
+  
+  Todo.findByIdAndUpdate(req.params.id, {$set:body}, {new:true})
+    .then(todo=>{
+      res.send({todo})
+      console.log(todo)
+    })
+    .catch(err=>{
+      res.send(err)
+      console.log(err)
+    })
 
+  
+})
+
+
+app.delete('/todos/:id', (req, res)=>{
+  Todo.findByIdAndRemove(req.params.id)
+    .then((todo)=>{
+      res.send('todo removed')
+      console.log(todo)
+    })
+    .catch(error=>{
+      console.log(error)
+    })
+})
 
 //
 app.listen(process.env.PORT, process.env.IP, ()=>{
