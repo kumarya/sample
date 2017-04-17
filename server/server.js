@@ -37,6 +37,18 @@ app.get('/todos', (req, res)=>{
   })
 })
 
+//id
+
+app.get('/todos/:id', (req, res)=>{
+  Todo.findById(req.params.id)
+    .then(todo=>{
+      res.send({todo})
+    })
+    .catch(error=>{
+      res.status(400).send(error)
+    })
+})
+
 
 
 //
