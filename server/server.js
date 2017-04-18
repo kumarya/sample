@@ -1,5 +1,6 @@
 var express = require("express")
 var app = express()
+var cors = require('cors')
 const _ = require("lodash")
 var bodyParser = require("body-parser")
 var {mongoose} = require("./db/mongoose")
@@ -9,6 +10,7 @@ var {Todo}  = require("./models/todo")
 var {User}  = require("./models/user")
 
 app.use(bodyParser.json())
+app.use(cors());
 
 //CRUD
 app.post('/todos', (req, res) => {
