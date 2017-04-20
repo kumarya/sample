@@ -5,9 +5,13 @@ const _ = require("lodash")
 var bodyParser = require("body-parser")
 var {mongoose} = require("./db/mongoose")
 
+
+
 var {Todo}  = require("./models/todo")
 
 var {User}  = require("./models/user")
+
+
 
 app.use(bodyParser.json())
 app.use(cors());
@@ -25,7 +29,29 @@ app.post('/todos', (req, res) => {
   });
 });
 
+//user 
 
+app.post('/signup', (req, res)=>{
+  var body = _.pick(req.body, ['email', 'password'])
+  var user = new User(body)
+  user.save()
+    .then((user)=>{
+      return user.generateAuthToken()
+        .then((token)=>{
+          res.header('x-auth', token).send(user)
+        })
+      
+      //res.send(user)
+    })
+    .catch(error=>{
+      res.send(error)
+    })
+  
+  
+  
+})
+
+// user creation ends
 
 app.get('/todos', (req, res)=>{
   
