@@ -11,6 +11,8 @@ var {Todo}  = require("./models/todo")
 
 var {User}  = require("./models/user")
 
+var {authenticate} = require("./middleware/authenticate")
+
 
 
 app.use(bodyParser.json())
@@ -28,6 +30,17 @@ app.post('/todos', (req, res) => {
     res.status(400).send(e);
   });
 });
+
+//end middle
+
+//user/me
+app.get('/users/me', authenticate, (req, res)=>{
+  res.send(req.user)
+    
+})
+
+
+///
 
 //user 
 
