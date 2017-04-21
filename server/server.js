@@ -42,6 +42,28 @@ app.get('/users/me', authenticate, (req, res)=>{
 
 ///
 
+//login
+
+app.post('/login', (req, res)=>{
+  var body = _.pick(req.body, ['email', 'password'])
+  User.findByCredentials(body.email, body.password)
+    .then(user=>{
+      return user.generateAuthToken()
+        .then((token)=>{
+          
+          res.header('x-auth', token).send(user)
+          
+        })
+    })
+    .catch(error=>{
+      res.status(400).send(error)
+    })
+  
+  
+})
+
+//login ends
+
 //user 
 
 app.post('/signup', (req, res)=>{
