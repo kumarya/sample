@@ -42,6 +42,26 @@ app.get('/users/me', authenticate, (req, res)=>{
 
 ///
 
+//logout
+
+app.delete('/signout', authenticate, (req, res)=>{
+  
+  req.user.removeToken(req.token)
+    .then(()=>{
+      res.status(200).send()
+      
+    })
+    .catch(err=>{
+      res.status(400).send(err)
+    })
+  
+})
+
+
+//logout ends
+
+
+
 //login
 
 app.post('/login', (req, res)=>{

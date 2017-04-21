@@ -67,6 +67,24 @@ userSchema.methods.generateAuthToken = function (){
       })
 };
 
+//another instance method for logout
+
+userSchema.methods.removeToken = function(token){
+    var user = this
+    
+    return user.update({
+        $pull:{
+            tokens:{
+                token:token
+            }
+        }
+    })
+    
+}
+
+
+//
+
 
 //model method not like instance method
 userSchema.statics.findByToken = function(token){
