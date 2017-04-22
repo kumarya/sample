@@ -19,19 +19,6 @@ app.use(bodyParser.json())
 app.use(cors());
 
 //CRUD
-app.post('/todos', (req, res) => {
-  var todo = new Todo({
-    text: req.body.text
-  });
-
-  todo.save().then((doc) => {
-    res.send(doc);
-  }, (e) => {
-    res.status(400).send(e);
-  });
-});
-
-//end middle
 
 //user/me
 app.get('/users/me', authenticate, (req, res)=>{
@@ -121,10 +108,34 @@ app.get('/todos', (req, res)=>{
   })
 })
 
+//POST Todos
+
+app.post('/todos', authenticate, (req, res) => {
+  var todo = new Todo({
+    text: req.body.text,
+    _creator:req.user._id
+  });
+
+  todo.save().then((doc) => {
+    res.send(doc);
+  }, (e) => {
+    res.status(400).send(e);
+  });
+});
+
+//end POST Todos
+
+
+
 //id
 
-app.get('/todos/:id', (req, res)=>{
-  Todo.findById(req.params.id)
+app.get('/todos/:id', authenticate, (req, res)=>{
+  var id = req.params.id
+  
+  Todo.findOne({
+    _id:id,
+    _creator:req.user._id
+  })
     .then(todo=>{
       res.send({todo})
     })
@@ -133,10 +144,15 @@ app.get('/todos/:id', (req, res)=>{
     })
 })
 
-app.patch('/todos/:id', (req, res)=>{
+app.patch('/todos/:id', authenticate, (req, res)=>{
   const body = _.pick(req.body, ['text', 'completed'])
+  var id = req.params.id
   
-  Todo.findByIdAndUpdate(req.params.id, {$set:body}, {new:true})
+  Todo.findOneAndUpdate({
+    _id:id,
+    _creator:req.user._id
+    
+  }, {$set:body}, {new:true})
     .then(todo=>{
       res.send({todo})
       console.log(todo)
@@ -150,8 +166,13 @@ app.patch('/todos/:id', (req, res)=>{
 })
 
 
-app.delete('/todos/:id', (req, res)=>{
-  Todo.findByIdAndRemove(req.params.id)
+app.delete('/todos/:id', authenticate, (req, res)=>{
+  var id = req.params.id
+  
+  Todo.findOneIdAndRemove({
+    _id:id,
+    _creator:req.user._id
+  })
     .then((todo)=>{
       res.send('todo removed')
       console.log(todo)
